@@ -1,6 +1,7 @@
 package Principal;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,8 +93,8 @@ public class principalJuego {
 			ejercito2.recibirAtaque();
 			break;
 		case 4:
-			guardar(ejercito1);
-			guardar(ejercito2);
+			guardarcutre(ejercito1);
+			guardarcutre(ejercito2);
 			break;
 		default:
 			System.err.println("\n\n¡La opcion introducida es erronea!\n\n"); // Esta puesto el err, para que el mensaje
@@ -139,8 +141,41 @@ public class principalJuego {
 	 * @param e
 	 * @throws IOException
 	 */
+	private static boolean guardarcutre (Ejercito e) {
+		boolean response = true;
+		
+		try
+		{
+			File aux = new File(e.getNombre() + ".txt");
+			PrintWriter pw;
+			if (aux.exists() && aux.isFile() && aux.canWrite())
+			{
+				pw = new PrintWriter(aux);
+				pw.append(e.toString());
+				
+			}else
+			{
+				if(aux.createNewFile())
+				{
+					pw = new PrintWriter(aux);
+					pw.write(e.toString());
+				}else
+				{
+					response = false;
+				}
+			}
+			
+		}catch(Exception exp)
+		{
+			response = false;
+		}
+		
+		return response;
+	}
+	
 	private static void guardar(Ejercito e) throws IOException {
-		Path ejer = Paths.get(e.getNombre(), ".txt");
+		Path ejer = Paths.get(e.getNombre() + ".txt");
+		//File ejer = new File(e.getNombre() + ".txt");
 		OutputStream flujoSalida = new FileOutputStream(ejer.toFile()); // TODO: Aqui da fallo, y no entiendo el porque
 		OutputStream flujoSalDatos = new ObjectOutputStream(flujoSalida);
 
